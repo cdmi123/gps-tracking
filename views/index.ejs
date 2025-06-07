@@ -25,7 +25,7 @@
         zoom: 5,
         center: { lat: 22.3072, lng: 73.1812 }
       });
-
+    var userId = 0
       const users = JSON.stringify(users)
       users.forEach(user => {
         const marker = new google.maps.Marker({
@@ -33,9 +33,13 @@
           map: map,
           title: user.userId
         });
+
+        userId = user.userID;
         markers[user.userId] = marker;
       });
     }
+
+
 
     socket.on('locationUpdate', (data) => {
       const pos = { lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) };
@@ -56,6 +60,7 @@
   position => {
     const { latitude, longitude } = position.coords;
     console.log('Sending location:', latitude, longitude);  // Add this line to debug
+    console.log("userID: ",userId)
     socket.emit("locationUpdate", { userId, latitude, longitude });
   },
   error => {
