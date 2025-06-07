@@ -52,13 +52,21 @@
     });
 
     window.onload = function () {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          document.getElementById('lat').value = position.coords.latitude;
-          document.getElementById('lon').value = position.coords.longitude;
-          document.getElementById('locationForm').submit();
-        });
-      }
+      navigator.geolocation.watchPosition(
+  position => {
+    const { latitude, longitude } = position.coords;
+    console.log('Sending location:', latitude, longitude);  // Add this line to debug
+    socket.emit("locationUpdate", { userId, latitude, longitude });
+  },
+  error => {
+    console.error("Error getting location:", error);
+  },
+  {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 5000
+  }
+);  
     };
   </script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8w0YdRJ9DCwhYKO80zLMqMcGcUnO9gkk&callback=initMap"></script>
